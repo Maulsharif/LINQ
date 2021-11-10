@@ -25,18 +25,9 @@ namespace Task1
         {
             if (customers == null) throw new ArgumentNullException(nameof(customers));
             if (suppliers == null) throw new ArgumentNullException(nameof(suppliers));
-            var result =
-                  customers
-                  .GroupJoin(suppliers,
-                              c => new { c.Country, c.City },
-                              s => new { s.Country, s.City },
-                              (c, ss) => new
-                              {
-                                  c,
-                                  Suppliers = ss.Select(s => s.SupplierName)
-                              });
-            var res = result;
-            return null;
+
+            return
+              customers.Select(c =>(c, suppliers.Where(p=>p.Country==c.Country && p.City ==c.City)));
         }
 
         public static IEnumerable<(Customer customer, IEnumerable<Supplier> suppliers)> Linq2UsingGroup(
@@ -44,16 +35,15 @@ namespace Task1
             IEnumerable<Supplier> suppliers
         )
         {
-            throw new NotImplementedException();
+
+          return   customers.Select(c => (c, suppliers.Where(p => p.Country == c.Country && p.City == c.City)));
         }
 
         public static IEnumerable<Customer> Linq3(IEnumerable<Customer> customers, decimal limit)
         {
-            if (customers == null) throw new ArgumentNullException(nameof(customers));
-
-            var result =
-               customers.Where(c => c.Orders.Any(o => o.Total > limit));
-            return result;
+           if (customers == null) throw new ArgumentNullException(nameof(customers));
+          return  customers.Where(c => c.Orders.Any(o => o.Total > limit));
+           
         }
 
         public static IEnumerable<(Customer customer, DateTime dateOfEntry)> Linq4(
@@ -62,8 +52,7 @@ namespace Task1
         {
             // 4.Выдайте список клиентов с указанием, начиная с какой даты они стали клиентами(принять за таковую дату самого первого заказа)
             if (customers == null) throw new ArgumentNullException(nameof(customers));
-            var res = customers.Where(c=>c.Orders.Length>0).Select(x => (customer: x, dateOfEntry: x.Orders.Min(o=>o.OrderDate)));
-            return res;
+            return  customers.Where(c=>c.Orders.Length>0).Select(x => (customer: x, dateOfEntry: x.Orders.Min(o=>o.OrderDate)));
           
         }
 
@@ -110,19 +99,26 @@ namespace Task1
             decimal expensive
         )
         {
-            throw new NotImplementedException();
+            return null;
+                //products
+                 //.Select(c =>
+                 //(
+                 // products.GroupBy(p=>p.UnitPrice <= cheap) ? cheap:
+                 //                   p.UnitPrice < average ? "Average price" : "Expensive"
+                 //  products.Sum
+                 //));
         }
 
         public static IEnumerable<(string city, int averageIncome, int averageIntensity)> Linq9(
             IEnumerable<Customer> customers
         )
         {
-            throw new NotImplementedException();
+            var res = customers.GroupBy(p => p.City).Select(x => (city:x.Key, averageIncome: (int)Math.Round(x.Average(c=>c.Orders.Sum(o=>o.Total))), averageIntensity:(int)x.Average(c=>c.Orders.Length)));
+            return res;
         }
 
         public static string Linq10(IEnumerable<Supplier> suppliers)
         {
-            if (suppliers == null) throw new ArgumentNullException(nameof(suppliers));
             var stringBuilder = new StringBuilder();
             var res = suppliers.OrderBy(p => p.Country.Length).ThenBy(p=>p.Country).GroupBy(p => p.Country);
             res.ToList().ForEach(x => stringBuilder.Append(x.Key));

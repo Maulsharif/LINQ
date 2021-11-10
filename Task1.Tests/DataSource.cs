@@ -4,7 +4,7 @@ using Task1.DoNotChange;
 
 namespace Task1.Tests
 {
-    internal static class DataSource
+    public static class DataSource
     {
         public static readonly List<Product> Products = new List<Product>
         {
