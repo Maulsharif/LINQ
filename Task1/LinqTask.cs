@@ -82,7 +82,7 @@ namespace Task1
         public static IEnumerable<Linq7CategoryGroup> Linq7(IEnumerable<Product> products)
         {
 
-            //var categories = products
+            //return  categories = products
             //      .GroupBy(p => p.Category, (category, products) => new Linq7CategoryGroup()
             //      {
             //          Category = category,
@@ -92,7 +92,7 @@ namespace Task1
                      
             //      });
             return null;
-           // return categories;
+         
         }
 
         public static IEnumerable<(decimal category, IEnumerable<Product> products)> Linq8(
@@ -102,22 +102,26 @@ namespace Task1
             decimal expensive
         )
         {
-            
-            throw new NotImplementedException();
+            if (products == null) throw new ArgumentNullException(nameof(products));
+            var result = products
+                    .GroupBy(p => p.UnitPrice <= cheap ? cheap
+                                : p.UnitPrice <= middle ? middle
+                                : expensive).Select(x => (x.Key, from k in x select k));
+            return result;
         }
 
         public static IEnumerable<(string city, int averageIncome, int averageIntensity)> Linq9(
             IEnumerable<Customer> customers
         )
         {
-            var res = customers.GroupBy(p => p.City).Select(x => (city:x.Key, averageIncome: (int)Math.Round(x.Average(c=>c.Orders.Sum(o=>o.Total))), averageIntensity:(int)x.Average(c=>c.Orders.Length)));
+            var res = customers.GroupBy(p => p.City).Select(x =>(x.Key, (int)Math.Round(x.Average(c=>c.Orders.Sum(o=>o.Total))), (int)x.Average(c=>c.Orders.Length)));
             return res;
         }
 
         public static string Linq10(IEnumerable<Supplier> suppliers)
         {
             var stringBuilder = new StringBuilder();
-            var res = suppliers.OrderBy(p => p.Country.Length).ThenBy(p=>p.Country).GroupBy(p => p.Country);
+            var res = suppliers.OrderBy(p => p.Country.Length).ThenBy(p=> p.Country).GroupBy(p => p.Country);
             res.ToList().ForEach(x => stringBuilder.Append(x.Key));
             return stringBuilder.ToString();
         }
