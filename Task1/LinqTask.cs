@@ -35,25 +35,28 @@ namespace Task1
             IEnumerable<Supplier> suppliers
         )
         {
-
-          return   customers.Select(c => (c, suppliers.Where(p => p.Country == c.Country && p.City == c.City)));
+            if (customers == null) throw new ArgumentNullException(nameof(customers));
+            if (suppliers == null) throw new ArgumentNullException(nameof(suppliers));
+            
+            var result = customers.GroupJoin(suppliers,
+                              c => new { c.Country, c.City },
+                              s => new { s.Country, s.City },
+                              (c, ss) => ( customer : c, suppliers : ss ));
+            return result;
         }
 
         public static IEnumerable<Customer> Linq3(IEnumerable<Customer> customers, decimal limit)
         {
            if (customers == null) throw new ArgumentNullException(nameof(customers));
-          return  customers.Where(c => c.Orders.Any(o => o.Total > limit));
-           
+           return  customers.Where(c => c.Orders.Any(o => o.Total > limit)); 
         }
 
         public static IEnumerable<(Customer customer, DateTime dateOfEntry)> Linq4(
             IEnumerable<Customer> customers
         )
         {
-            // 4.Выдайте список клиентов с указанием, начиная с какой даты они стали клиентами(принять за таковую дату самого первого заказа)
             if (customers == null) throw new ArgumentNullException(nameof(customers));
             return  customers.Where(c=>c.Orders.Length>0).Select(x => (customer: x, dateOfEntry: x.Orders.Min(o=>o.OrderDate)));
-          
         }
 
         public static IEnumerable<(Customer customer, DateTime dateOfEntry)> Linq5(
@@ -78,18 +81,18 @@ namespace Task1
 
         public static IEnumerable<Linq7CategoryGroup> Linq7(IEnumerable<Product> products)
         {
-            /* example of Linq7result
 
-             category - Beverages
-	            UnitsInStock - 39
-		            price - 18.0000
-		            price - 19.0000
-	            UnitsInStock - 17
-		            price - 18.0000
-		            price - 19.0000
-             */
+            //var categories = products
+            //      .GroupBy(p => p.Category, (category, products) => new Linq7CategoryGroup()
+            //      {
+            //          Category = category,
+            //         products.GroupBy(item => item.UnitsInStock, (count, pr) => new Linq7UnitsInStockGroup() { 
 
-            throw new NotImplementedException();
+            //         })
+                     
+            //      });
+            return null;
+           // return categories;
         }
 
         public static IEnumerable<(decimal category, IEnumerable<Product> products)> Linq8(
@@ -99,14 +102,8 @@ namespace Task1
             decimal expensive
         )
         {
-            return null;
-                //products
-                 //.Select(c =>
-                 //(
-                 // products.GroupBy(p=>p.UnitPrice <= cheap) ? cheap:
-                 //                   p.UnitPrice < average ? "Average price" : "Expensive"
-                 //  products.Sum
-                 //));
+            
+            throw new NotImplementedException();
         }
 
         public static IEnumerable<(string city, int averageIncome, int averageIntensity)> Linq9(
