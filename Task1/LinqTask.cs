@@ -82,17 +82,26 @@ namespace Task1
         public static IEnumerable<Linq7CategoryGroup> Linq7(IEnumerable<Product> products)
         {
 
-            //return  categories = products
-            //      .GroupBy(p => p.Category, (category, products) => new Linq7CategoryGroup()
-            //      {
-            //          Category = category,
-            //         products.GroupBy(item => item.UnitsInStock, (count, pr) => new Linq7UnitsInStockGroup() { 
+            if (products == null) throw new ArgumentNullException(nameof(products));
+            var res = from p in products
+                         group p by p.Category
+                         into categoryGroup
+                         select new Linq7CategoryGroup()
+                         {
+                             Category = categoryGroup.Key,
+                             UnitsInStockGroup = from p in categoryGroup
+                                        group p by p.UnitsInStock
+                                                   into availabilityGroup
+                                        select new Linq7UnitsInStockGroup()
+                                        {
+                                            UnitsInStock= availabilityGroup.Key,
+                                            Prices = from p in availabilityGroup
+                                                       orderby p.UnitPrice
+                                                       select p.UnitPrice
+                                        }
+                         };
 
-            //         })
-                     
-            //      });
-            return null;
-         
+            return res;
         }
 
         public static IEnumerable<(decimal category, IEnumerable<Product> products)> Linq8(
