@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Task1.Tests;
+using Task1;
 
 namespace ConsoleApp2
 {
@@ -10,11 +11,17 @@ namespace ConsoleApp2
         {
             var customers = DataSource.Customers;
             var suppliers = DataSource.Suppliers;
-            // var result = customers.Join(suppliers, c =>  c.City, s => s.City, (c, s) => (customers.Where(p=>p.City==s.City)));
 
-         
 
-            Console.WriteLine(result.ToList().Count);
+            var res1 = LinqTask.Linq2(customers, suppliers);
+            var res2 = LinqTask.Linq2UsingGroup(customers, suppliers);
+            Console.WriteLine(res1.ToList().Count);
+            Console.WriteLine(res2.ToList().Count);
+
+
+
+
+
         }
     }
 }
